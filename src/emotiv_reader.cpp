@@ -18,10 +18,9 @@ int main(int argc, char **argv)
 
     ros::NodeHandle n;
 
-    //ros::Publisher temp_pub = n.advertise<std_msgs::String>("temperatura", 1000);
-    ros::Publisher temp_pub = n.advertise<std_msgs::String>("chatter", 1000);
+    ros::Publisher temp_pub = n.advertise<std_msgs::String>("temperatura", 1000);
 
-    ros::Rate loop_rate(10);
+    ros::Duration loop_rate(2); //seconds
 
     while(ros::ok())
     {
@@ -37,8 +36,16 @@ int main(int argc, char **argv)
 
 int emotiv(ros::Publisher temp_pub) {
 
-    const std::string url("http://www.mocky.io/v2/5c0ac0683500005700a86296");
-
+	const char* env_emotiv_server_url;
+	
+    if(!(env_emotiv_server_url = std::getenv("EMOTIV_SERVER_URL")))
+	{
+		std::cout << "Emotiv server not found. Please set  EMOTIV_SERVER_URL environment variable." << std::endl;
+		return 1;
+	}
+	
+	const std::string url(env_emotiv_server_url);
+		
     CURL* curl = curl_easy_init();
 
     // Set remote URL.
@@ -109,7 +116,7 @@ int emotiv(ros::Publisher temp_pub) {
     }
     else
     {
-        std::cout << "Couldn't GET from " << url << " - exiting" << std::endl;
+        std::cout << "Couldn't GET from " << url << " - httpCode: " << httpCode << " - exiting" << std::endl;
         return 1;
     }
 
