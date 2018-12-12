@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
     ros::Publisher temp_pub = n.advertise<std_msgs::String>("temperatura", 1000);
 
-    ros::Duration loop_rate(2); //seconds
+    ros::Duration loop_rate(0.5); //seconds
 
     while(ros::ok())
     {
@@ -77,7 +77,7 @@ int emotiv(ros::Publisher temp_pub) {
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
     curl_easy_cleanup(curl);
 
-    if (httpCode == 200)
+    if (httpCode == 200 || httpCode == 202)
     {
         // Response looks good - done using Curl now.  Try to parse the results
         Json::Value jsonData;
