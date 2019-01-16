@@ -226,12 +226,15 @@ std::string parseCurrentAction(int current_action)
     {
         case 0:
             //stop
+			std::cout << " Neutro" << std::flush;
             return "S";
         case 1:
             //quente
+			std::cout << " Quente!" << std::flush;
             return "Q";
         case 2:
             //frio
+			std::cout << " Frio!" << std::flush;
             return "F";
         default:
             return "";
