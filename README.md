@@ -56,6 +56,7 @@ export EMOTIV_SERVER_URL=http://192.168.0.104:1234/emotiv
 
 **Running**
 
+$ cd ~/catkin_ws  
 $ roslaunch turtlebot3_gazebo turtlebot3_world.launch  
 $ rosrun jogo_quente_frio jogo_quente_frio  
 $ rosrun jogo_quente_frio emotiv_reader  
