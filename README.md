@@ -1,10 +1,10 @@
-# Hot and Cold
+# Jogo Quente Frio
 
-This repository is part of the **Hot and Cold Game**. 
+Jogo Quente Frio is a ROS (Robot Operating System) module that works reading **emotivinterface** REST/JSON API and forwarding its commands to Turtlebot3 robot.
 
-The Hot and Cold is a game where the player commands a wheeled robot (Turtlebot3 Waffle) with the brain (EMOTIV Insight 5 channel mobile EEG) guiding it to a goal. The purpose of **jogo_quente_frio** is to read a REST/JSON API with the EMOTIV signals and post commands to ROS (Robot Operating System) interface.
+This repository is part of the **Hot and Cold Game**. The Hot and Cold is a game where the player commands a wheeled robot (Turtlebot3 Waffle) with the brain (EMOTIV Insight 5 channel mobile EEG) guiding it to a goal. 
 
-### Hot and Cold Game Repositories:
+**Hot and Cold Game Repositories:**
 
 - emotivinterface
 - emotivwebserver
@@ -73,8 +73,8 @@ http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#pc-setup
 
 **jogo_quente_frio:**
 
-Listen to emotiv_reader (ROS module) messages and forward commands to turtlebot3 through ROS interface.
+Listen to emotiv_reader messages and forward its commands to Turtlebot3 through ROS interface.
 
 **emotiv_reader:**
 
-Read emotivinterface JSON API and publish messages to jogo_quente_frio module. Depends on libcurl and jsoncpp.
+Read emotivinterface JSON API and publish ROS messages to jogo_quente_frio module. Depends on libcurl and jsoncpp.
