@@ -12,11 +12,11 @@ The Hot and Cold is a game where the player commands a wheeled robot (Turtlebot3
 - emotivwebserver
 - jogo_quente_frio
 
-### jogo_quente_frio Requirements:
+### Requirements:
 
 - Ububtu 16.04
 
-### jogo_quente_frio Installation:
+### Installation:
 
 **Install ROS:**
 
@@ -71,7 +71,7 @@ http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#simulation
 http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#pc-setup  
 
 
-### jogo_quente_frio ROS Modules:
+### ROS Modules:
 
 **jogo_quente_frio:**
 
