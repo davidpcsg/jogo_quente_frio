@@ -54,16 +54,16 @@ bool JogoQuenteFrioDefinitions::init()
   {
     turning_radius_ = 0.08;
     rotate_angle_ = 50.0 * DEG2RAD;
-    front_distance_limit_ = 0.5;
-    side_distance_limit_  = 0.5;
+    front_distance_limit_ = 0.3;
+    side_distance_limit_  = 0.3;
   }
   else if (!robot_model.compare("waffle"))
   {
 	printf("  waffle  ");
     turning_radius_ = 0.1435;
     rotate_angle_ = 40.0 * DEG2RAD;
-    front_distance_limit_ = 0.5;
-    side_distance_limit_  = 0.5;
+    front_distance_limit_ = 0.3;
+    side_distance_limit_  = 0.3;
   }
   ROS_INFO("robot_model : %s", robot_model.c_str());
   ROS_INFO("turning_radius_ : %lf", turning_radius_);
@@ -85,7 +85,7 @@ bool JogoQuenteFrioDefinitions::init()
   joint_state_sub_ = nh_.subscribe("/joint_states", 10, &JogoQuenteFrioDefinitions::jointStateMsgCallBack, this);	
   // ----
   cold_hot_sub_ = nh_.subscribe("temperatura", 10, &JogoQuenteFrioDefinitions::temperaturaCallback,this);
-  image_sub_ = nh_.subscribe("/camera/rgb/image_raw", 1, &JogoQuenteFrioDefinitions::imageCallback,this);		
+  image_sub_ = nh_.subscribe("/camera/rgb/image_raw/compressed", 1, &JogoQuenteFrioDefinitions::imageCallback,this);		
   // ---	 	
 	
   return true;
@@ -100,7 +100,7 @@ void JogoQuenteFrioDefinitions::jointStateMsgCallBack(const sensor_msgs::JointSt
 
 void JogoQuenteFrioDefinitions::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
- uint16_t scan_angle[3] = {0, 10, 350};
+ uint16_t scan_angle[3] = {0, 30, 330};
 
   for (int num = 0; num < 3; num++)
   {
@@ -146,34 +146,24 @@ void JogoQuenteFrioDefinitions::temperaturaCallback(const std_msgs::String::Cons
 	 
 }
 
-void  JogoQuenteFrioDefinitions::imageCallback(const sensor_msgs::ImageConstPtr& msg)
+void  JogoQuenteFrioDefinitions::imageCallback(const sensor_msgs::CompressedImageConstPtr& msg)
 {
  try
   {
-	Size size(320,266); 
-    //cv::imshow("view", cv_bridge::toCvShare(msg, "mono8")->image);  
-	imagem = cv_bridge::toCvShare(msg, "mono8")->image;
-	resize(imagem,imagem,size);	  
-	threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	cvtColor(imagem, imagem, CV_GRAY2RGB);   
-	cv::imshow("view", imagem);    
-	imagem_mensagem_ = msg; 
+	  
+	imagem = cv::imdecode(cv::Mat(msg->data),1);
+	cv::imshow("view", imagem);  
     cv::waitKey(10);
    }
    catch (cv_bridge::Exception& e)
    {
-     ROS_ERROR("Could not convert from '%s' to 'mono16'.", msg->encoding.c_str());
+     ROS_ERROR("Could not convert to image!");
    }   
 }
 
+
 //-----
-
-void JogoQuenteFrioDefinitions::publica_imagem (sensor_msgs::ImageConstPtr imagem_pub)
-{
-
-  image_pub_.publish(imagem_pub);
-}		
-
+	
 
 void JogoQuenteFrioDefinitions::updatecommandVelocity(double linear, double angular)
 { 
@@ -230,8 +220,13 @@ string str;
 			   str = ss.str(); 
 			   pic_count = pic_count + 1;	 
 			   got_picture = true;	 
-		       ROS_INFO ("Foto");				 
-               cv::imwrite( "/home/labvad/Imagens/picture"+ str + "_.ppm", imagem );
+		       ROS_INFO ("Foto");	
+							  
+				 
+			  Size size(320,266); 	
+	          resize(imagem,imagem,size);	  
+	          threshold( imagem, imagem, 100,255,THRESH_BINARY);	 
+              cv::imwrite( "/home/labvad/Imagens/picture"+ str + "_.ppm", imagem );
 			   //cv::imwrite( "picutre"+ str + "_.ppm", imagem ); 
 	         }			 
 	 }		

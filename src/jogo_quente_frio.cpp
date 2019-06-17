@@ -85,7 +85,7 @@ bool JogoQuenteFrioDefinitions::init()
   joint_state_sub_ = nh_.subscribe("/joint_states", 10, &JogoQuenteFrioDefinitions::jointStateMsgCallBack, this);	
   // ----
   cold_hot_sub_ = nh_.subscribe("temperatura", 10, &JogoQuenteFrioDefinitions::temperaturaCallback,this);
-  //image_sub_ = nh_.subscribe("/camera/rgb/image_raw", 1, &JogoQuenteFrioDefinitions::imageCallback,this);		
+  image_sub_ = nh_.subscribe("/camera/rgb/image_raw/compressed", 1, &JogoQuenteFrioDefinitions::imageCallback,this);		
   // ---	 	
 	
   return true;
@@ -100,7 +100,7 @@ void JogoQuenteFrioDefinitions::jointStateMsgCallBack(const sensor_msgs::JointSt
 
 void JogoQuenteFrioDefinitions::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
- uint16_t scan_angle[5] = {0,30,330,};
+ uint16_t scan_angle[5] = {0,30,330};
 
   for (int num = 0; num < 3; num++)
   {
@@ -128,49 +128,37 @@ void JogoQuenteFrioDefinitions::temperaturaCallback(const std_msgs::String::Cons
 		// ROS_INFO ("Temperatura Quente");
 	 } else if(("[%s]",msg->data) == "F") {
 		 temperatura = 'F';
-		 direcao_giro = 'E';
-		 /*
 		 if (direcao_giro == 'D'){
 			 direcao_giro = 'E';
 		 } else if (direcao_giro == 'E'){
 			 direcao_giro = 'D';
-		 }
-		 */
-		 
+		 }	 
 		 //ROS_INFO ("Temperatura Fria");
 	 } else if(("[%s]",msg->data) == "S") {
 		 temperatura = 'S';
 		 //ROS_INFO ("Para");		 
 	 } else {
 		 temperatura = 'Z';
-	 }	 
+	 }
 	 
 }
 
-void  JogoQuenteFrioDefinitions::imageCallback(const sensor_msgs::ImageConstPtr& msg)
+void  JogoQuenteFrioDefinitions::imageCallback(const sensor_msgs::CompressedImageConstPtr& msg)
 {
- /*try
-  {
-    cv::imshow("view", cv_bridge::toCvShare(msg, "bgr8")->image);  
-	imagem = cv_bridge::toCvShare(msg, "mono8")->image;	  
-	imagem_mensagem_ = msg; 
-    cv::waitKey(10);
+ try
+  {  
+	imagem = cv::imdecode(cv::Mat(msg->data),1);
+	cv::imshow("view_video", imagem);  
+        cv::waitKey(10);
    }
    catch (cv_bridge::Exception& e)
    {
-     ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
-   }
-  */ 
+     ROS_ERROR("Could not convert to image!");
+   }   
 }
 
 //-----
-
-void JogoQuenteFrioDefinitions::publica_imagem (sensor_msgs::ImageConstPtr imagem_pub)
-{
-
-  //image_pub_.publish(imagem_pub);
-}		
-
+		
 
 void JogoQuenteFrioDefinitions::updatecommandVelocity(double linear, double angular)
 { 
@@ -194,23 +182,29 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 	
   
 	if ( temperatura == 'Q') {
-              //Tira foto quando se aproxima de um objeto 
-		  /*   if (((direction_vector_[CENTER] < front_distance_limit_) && (direction_vector_[CENTER] != 0.0 ))||
-		          (direction_vector_[LEFT10] < side_distance_limit_) ||
-	              (direction_vector_[RIGHT10] < side_distance_limit_))
+
+		ROS_INFO ("direction %f", direction_vector_[CENTER]);
+		ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
+                
+		//Tira foto quando se aproxima de um objeto 
+		      if ((direction_vector_[CENTER] < 0.5) && (direction_vector_[CENTER] != 0.0 ))
 			  {
+				ROS_INFO ("Objeto proximo...");
 				if (got_picture == false )
-				{		
-				  ROS_INFO ("FOTO");	
-				  Size size(320,266); 	
+				{
+				  ROS_INFO ("Lendo foto...");		
+				  //ROS_INFO ("FOTO");	
+				  Size size(400,225); 	
                   updatecommandVelocity(0.0, 0.0);
+				  cv::imshow("view", imagem);  
+                  cv::waitKey(10);						
 				  sleep(2);
 	              resize(imagem,imagem,size);	  
 	              threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	              cvtColor(imagem, imagem, CV_GRAY2RGB); 
-                  cv::imwrite("/home/labvad/Imagens/picture.ppm", imagem);					
+	              //cvtColor(imagem, imagem, CV_GRAY2RGB); 
+                  cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
 				  sleep(2);
-			      str = "/home/labvad/Imagens/picture.ppm";
+			      str = "/home/davidpcsg/Imagens/picture.ppm";
 				  msg_pic_to_rec_.data = str;
 				  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
 				  	
@@ -218,7 +212,7 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 				  turtlebot3_state_num = GET_TB3_DIRECTION;	
 				}	
 			  }	  
-	     */	 
+		 
 			  switch(turtlebot3_state_num)
 			  {
 				case GET_TB3_DIRECTION: 	  
@@ -289,9 +283,10 @@ int main(int argc, char* argv[])
 {
   	
   ros::init(argc, argv, "jogo_quente_frio");
-	
- // cv::namedWindow("view",CV_WINDOW_NORMAL);	
- // cv::startWindowThread();		
+
+  cv::namedWindow("view_video",CV_WINDOW_NORMAL);		
+  cv::namedWindow("view",CV_WINDOW_NORMAL);	
+  cv::startWindowThread();		
 	  	
  JogoQuenteFrioDefinitions JogoQuenteFrioDefinitions;
 	
@@ -303,8 +298,9 @@ int main(int argc, char* argv[])
     ros::spinOnce();  
     loop_rate.sleep(); 
   }
-	
-  //cv::destroyWindow("view");		
+
+  cv::destroyWindow("view_video");		
+  cv::destroyWindow("view");		
 
   return 0;
 }
