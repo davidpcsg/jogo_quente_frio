@@ -212,51 +212,55 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 				  turtlebot3_state_num = GET_TB3_DIRECTION;	
 				}	
 			  }	  
-		 
-			  switch(turtlebot3_state_num)
-			  {
-				case GET_TB3_DIRECTION: 	  
-				  if ((direction_vector_[CENTER] > front_distance_limit_) || (direction_vector_[CENTER] == 0.0 ))
+		 	  
+			  /*
+				  switch(turtlebot3_state_num)
 				  {
-					turtlebot3_state_num = TB3_DRIVE_FORWARD;
-					got_picture = false;   
-				  } 
-				  if (((direction_vector_[CENTER] < front_distance_limit_ ) && (direction_vector_[CENTER] != 0.0 )) || 
-					 ( (direction_vector_[LEFT] < side_distance_limit_) && (direction_vector_[LEFT] != 0.0 )))
-				  {  
-					turtlebot3_state_num = TB3_RIGHT_TURN;   
+					case GET_TB3_DIRECTION: 	  
+					  if ((direction_vector_[CENTER] > front_distance_limit_) || (direction_vector_[CENTER] == 0.0 ))
+					  {
+						turtlebot3_state_num = TB3_DRIVE_FORWARD;
+						got_picture = false;   
+					  } 
+					  if (((direction_vector_[CENTER] < front_distance_limit_ ) && (direction_vector_[CENTER] != 0.0 )) || 
+						 ( (direction_vector_[LEFT] < side_distance_limit_) && (direction_vector_[LEFT] != 0.0 )))
+					  {  
+						turtlebot3_state_num = TB3_RIGHT_TURN;   
+					  }
+					  else if ((direction_vector_[RIGHT] < side_distance_limit_) && (direction_vector_[RIGHT] != 0.0 ))
+					  {	  
+						turtlebot3_state_num = TB3_LEFT_TURN;
+					  }
+					  break;
+
+					case TB3_DRIVE_FORWARD:
+					  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
+					  turtlebot3_state_num = GET_TB3_DIRECTION;
+					  break;
+
+					case TB3_RIGHT_TURN:  
+					  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
+					  turtlebot3_state_num = GET_TB3_DIRECTION;
+					  break;
+
+					case TB3_LEFT_TURN:	  
+					  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
+					  turtlebot3_state_num = GET_TB3_DIRECTION;
+					  break;
+
+					default:
+					  turtlebot3_state_num = GET_TB3_DIRECTION;
+					  break;
 				  }
-				  else if ((direction_vector_[RIGHT] < side_distance_limit_) && (direction_vector_[RIGHT] != 0.0 ))
-				  {	  
-					turtlebot3_state_num = TB3_LEFT_TURN;
-				  }
-				  break;
-
-				case TB3_DRIVE_FORWARD:
-				  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
-				  turtlebot3_state_num = GET_TB3_DIRECTION;
-				  break;
-
-				case TB3_RIGHT_TURN:  
-				  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
-				  turtlebot3_state_num = GET_TB3_DIRECTION;
-				  break;
-
-				case TB3_LEFT_TURN:	  
-				  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
-				  turtlebot3_state_num = GET_TB3_DIRECTION;
-				  break;
-
-				default:
-				  turtlebot3_state_num = GET_TB3_DIRECTION;
-				  break;
-			  }
+			  */
 	  
 		     // ROS_INFO ("Temperatura Quente");
 		
 	 } else if (temperatura == 'F') {
 		     
 	         // ROS_INFO ("Temperatura Fria");	              
+		      
+			  /*
 		      if (direcao_giro == 'D') { 
 					  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
 				      turtlebot3_state_num = GET_TB3_DIRECTION;
@@ -264,6 +268,7 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 					  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
 		              turtlebot3_state_num = GET_TB3_DIRECTION;
 			  }
+			  */
 		
 	 } else if (temperatura == 'S'){	  
 		     //  ROS_INFO ("Para");
