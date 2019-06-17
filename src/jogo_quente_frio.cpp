@@ -136,7 +136,10 @@ void JogoQuenteFrioDefinitions::temperaturaCallback(const std_msgs::String::Cons
 		 //ROS_INFO ("Temperatura Fria");
 	 } else if(("[%s]",msg->data) == "S") {
 		 temperatura = 'S';
-		 //ROS_INFO ("Para");		 
+		 //ROS_INFO ("Para");
+	 } else if(("[%s]",msg->data) == "C") {
+		 temperatura = 'C';
+		 //ROS_INFO ("Picture");
 	 } else {
 		 temperatura = 'Z';
 	 }
@@ -180,8 +183,21 @@ bool JogoQuenteFrioDefinitions::controlLoop()
  static uint8_t turtlebot3_state_num = 0;
  string str;
 	
-  
-	if ( temperatura == 'Q') {
+	if ( temperatura == 'C') {
+		ROS_INFO ("temperatura=C");
+	    Size size(400,225); 	
+	    updatecommandVelocity(0.0, 0.0);
+	    cv::imshow("view", imagem);  
+	    cv::waitKey(10);						
+	    resize(imagem,imagem,size);	  
+	    threshold( imagem, imagem, 100,255,THRESH_BINARY);
+	    cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
+	    str = "/home/davidpcsg/Imagens/picture.ppm";
+	    msg_pic_to_rec_.data = str;
+	    msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
+		temperatura = 'Z';
+	}
+	else if ( temperatura == 'Q') {
 
 		//ROS_INFO ("direction %f", direction_vector_[CENTER]);
 		//ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
@@ -197,17 +213,17 @@ bool JogoQuenteFrioDefinitions::controlLoop()
                   updatecommandVelocity(0.0, 0.0);
 				  cv::imshow("view", imagem);  
                   cv::waitKey(10);						
-				  sleep(2);
+				  //sleep(2);
 	              resize(imagem,imagem,size);	  
 	              threshold( imagem, imagem, 100,255,THRESH_BINARY);
 	              //cvtColor(imagem, imagem, CV_GRAY2RGB); 
                   cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
-				  sleep(2);
+				  //sleep(2);
 			      str = "/home/davidpcsg/Imagens/picture.ppm";
 				  msg_pic_to_rec_.data = str;
 				  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
 				  	
-				  got_picture = true;  
+				  //got_picture = true;  
 				  turtlebot3_state_num = GET_TB3_DIRECTION;	
 				}	
 			  }	  
