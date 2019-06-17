@@ -50,8 +50,8 @@ using namespace std;
 #define LEFT10   3
 #define RIGHT10  4
 
-#define LINEAR_VELOCITY  0.1
-#define ANGULAR_VELOCITY 1.0
+#define LINEAR_VELOCITY  0.3
+#define ANGULAR_VELOCITY 1.5
 
 #define GET_TB3_DIRECTION 0
 #define TB3_DRIVE_FORWARD 1
@@ -73,7 +73,6 @@ class JogoQuenteFrioDefinitions
  
   // imagem
    Mat imagem;
-   sensor_msgs::ImageConstPtr imagem_mensagem_;
    std_msgs::String msg_pic_to_rec_;
  
   // ROS Parameters
@@ -121,8 +120,7 @@ class JogoQuenteFrioDefinitions
   void jointStateMsgCallBack(const sensor_msgs::JointState::ConstPtr &msg); 
   //-----------
   void temperaturaCallback(const std_msgs::String::ConstPtr& msg);  
-  void imageCallback(const sensor_msgs::ImageConstPtr& msg);  
-  void publica_imagem (sensor_msgs::ImageConstPtr imagem_pub);
+  void imageCallback(const sensor_msgs::CompressedImageConstPtr& msg);  
  
 };
 #endif // JOGO_QUENTE_FRIO_DEF_H_
