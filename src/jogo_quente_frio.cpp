@@ -128,11 +128,15 @@ void JogoQuenteFrioDefinitions::temperaturaCallback(const std_msgs::String::Cons
 		// ROS_INFO ("Temperatura Quente");
 	 } else if(("[%s]",msg->data) == "F") {
 		 temperatura = 'F';
+		 direcao_giro = 'E';
+		 /*
 		 if (direcao_giro == 'D'){
 			 direcao_giro = 'E';
 		 } else if (direcao_giro == 'E'){
 			 direcao_giro = 'D';
-		 }	 
+		 }
+		 */
+		 
 		 //ROS_INFO ("Temperatura Fria");
 	 } else if(("[%s]",msg->data) == "S") {
 		 temperatura = 'S';
