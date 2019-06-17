@@ -210,26 +210,10 @@ target_link_libraries(jogo_quente_frio ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_executable(mensagem_quente_frio src/mensagem_quente_frio.cpp)
 target_link_libraries(mensagem_quente_frio ${catkin_LIBRARIES})
 
-add_executable(mostra_foto src/mostra_foto.cpp)
-target_link_libraries(mostra_foto ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-
-add_executable(reconhece_imagens src/reconhece_imagens.cpp)
-target_link_libraries(reconhece_imagens ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-
-add_executable(salva_fotos src/salva_fotos.cpp)
-target_link_libraries(salva_fotos ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-
 add_executable(emotiv_reader src/emotiv_reader.cpp)
 target_link_libraries(emotiv_reader ${catkin_LIBRARIES} -ljsoncpp -lcurl)
-
-catkin_install_python(PROGRAMS src/imagem.py
-                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 					
-catkin_install_python(PROGRAMS src/image_rec.py
-                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-					  
-					  
-
+					
 ################################################################################
 # Install
 ################################################################################

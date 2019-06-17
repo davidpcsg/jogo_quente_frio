@@ -183,17 +183,16 @@ bool JogoQuenteFrioDefinitions::controlLoop()
   
 	if ( temperatura == 'Q') {
 
-		ROS_INFO ("direction %f", direction_vector_[CENTER]);
-		ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
+		//ROS_INFO ("direction %f", direction_vector_[CENTER]);
+		//ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
                 
 		//Tira foto quando se aproxima de um objeto 
 		      if ((direction_vector_[CENTER] < 0.5) && (direction_vector_[CENTER] != 0.0 ))
 			  {
-				ROS_INFO ("Objeto proximo...");
+				//ROS_INFO ("Objeto proximo...");
 				if (got_picture == false )
 				{
-				  ROS_INFO ("Lendo foto...");		
-				  //ROS_INFO ("FOTO");	
+				  ROS_INFO ("Lendo foto...");
 				  Size size(400,225); 	
                   updatecommandVelocity(0.0, 0.0);
 				  cv::imshow("view", imagem);  
