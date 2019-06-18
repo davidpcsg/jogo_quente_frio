@@ -190,9 +190,9 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 	    cv::imshow("view", imagem);  
 	    cv::waitKey(10);						
 	    resize(imagem,imagem,size);	  
-	    threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	    cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
-	    str = "/home/davidpcsg/Imagens/picture.ppm";
+	    //threshold( imagem, imagem, 100,255,THRESH_BINARY);
+	    cv::imwrite("/home/davidpcsg/Imagens/picture.jpg", imagem);					
+	    str = "/home/davidpcsg/Imagens/picture.jpg";
 	    msg_pic_to_rec_.data = str;
 	    msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
 		temperatura = 'Z';

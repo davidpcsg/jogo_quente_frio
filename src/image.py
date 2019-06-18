@@ -55,8 +55,8 @@ class wiz:
     
     def switch_class_image(self,class_identifier):
         switcher = {
-            "triangulo": self.imgTitClass1,
-            "quadrado": self.imgTitClass2,
+            "quadrado": self.imgTitClass1,
+            "triangulo": self.imgTitClass2,
             "circulo": self.imgTitClass3,
             "indefinido": self.imgTitClass4,
         }
@@ -74,9 +74,9 @@ class wiz:
         for i in range(1,(self.n_classes+1)):
             self.train_class = i
             for j in range(1, self.n_samples+1):
-                file = self.raiz +'/classe'+str(i)+'_treino/picture' + str(j)+'_.ppm'
+                file = self.raiz +'/classe'+str(i)+'_treino/picture_' + str(j)+'.jpg'
                 image_src = cv2.imread(file, 0)
-              
+                image_src = cv2.resize(image_src,(100, 100))
                 image_dst = [(1 if e==255 else 0) for e in image_src.flatten()]
                             
                 # print feedback to user
@@ -84,9 +84,9 @@ class wiz:
                 
                 train_class_label = ""
                 if self.train_class == 1:
-                    train_class_label = "triangulo"
-                elif self.train_class == 2:
                     train_class_label = "quadrado"
+                elif self.train_class == 2:
+                    train_class_label = "triangulo"
                 elif self.train_class == 3:
                     train_class_label = "circulo"
                 else:
@@ -99,7 +99,10 @@ class wiz:
 
 
     def rec_sample(self, file):
-        image = cv2.imread(file, 0)
+        image = cv2.imread(file)
+        image = self.process_image(image)
+        image = cv2.resize(image,(100, 100))
+        cv2.imwrite(self.raiz + "/resized_image.bmp", image)
         image_bin = [(1 if e==255 else 0) for e in image.flatten()]
         
         # recognise the image and print a report
@@ -116,6 +119,27 @@ class wiz:
         print(class_name)     
         cv2.imshow('image', self.switch_class_image(class_name))
         cv2.waitKey(3)
+    
+    def process_image(self, image):
+
+       image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+       _,image_thresh = cv2.threshold(image_gray,50,255,cv2.THRESH_BINARY)
+       cv2.imwrite('image.bmp', image_thresh)
+       inverted_image = cv2.imread('image.bmp')
+       inverted_image[inverted_image == 255] = 1
+       inverted_image[inverted_image == 0] = 255
+       inverted_image[inverted_image == 1] = 0
+       inverted_image_gray = cv2.cvtColor(inverted_image,cv2.COLOR_BGR2GRAY)
+       ret,inverted_image_tresh = cv2.threshold(inverted_image_gray,127,255,0)
+       cv2.imwrite('inverted_image.bmp', inverted_image_tresh)
+       im2,contours, hierarchy = cv2.findContours(inverted_image_tresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+       cnt = contours[0]
+       x,y,w,h = cv2.boundingRect(cnt)
+       ret,inverted_image = cv2.threshold(inverted_image,0,255,cv2.THRESH_BINARY_INV)
+       detected_image = inverted_image[y:y+h,x:x+w]
+       detected_image = cv2.cvtColor(detected_image,cv2.COLOR_BGR2GRAY)
+       _,detected_image = cv2.threshold(detected_image,50,255,cv2.THRESH_BINARY)
+       return detected_image
         
 # wiz class end
 #*********************************************************************
@@ -123,38 +147,19 @@ class wiz:
 #*********************************************************************
 
 
+
+
 # Instantiate CvBridge
 bridge = CvBridge()
 
-
-
-#def image_callback(msg):
-#    print("Received an image!")
-#    try:
-#        # Convert your ROS Image message to OpenCV2
-#        cv2_img = bridge.imgmsg_to_cv2(msg, "bgr8")
-#    except CvBridgeError, e:
-#        print(e)
-#    else:
-#        # Save your OpenCV2 image as a jpeg 
-#        cv2.imwrite('camera_image.jpeg', cv2_img)
-
 def msg_img_to_rec_callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
-    image_source = data.data
-    file = image_source
-    wiz.rec_sample(a,file)
-#    print(image_source)
+    rospy.loginfo(rospy.get_caller_id() + " I heard %s", data.data)
+    wiz.rec_sample(a, data.data)
         
 def main():
     
     rospy.init_node('pic_to_recognize')
-    # Define your image topic
-#    image_topic = "/cameras/left_hand_camera/image"
-    # Set up your subscriber and define its callback
-#    rospy.Subscriber(image_topic, Image, image_callback)
     rospy.Subscriber("pic_to_rec", String, msg_img_to_rec_callback)
-    # Spin until ctrl + c
     rospy.spin()
     
 
