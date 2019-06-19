@@ -191,22 +191,7 @@ bool JogoQuenteFrioDefinitions::controlLoop()
  static uint8_t turtlebot3_state_num = 0;
  string str;
 	
-	if ( temperatura == 'C') {
-		ROS_INFO ("temperatura=C");
-	    Size size(400,225); 	
-	    updatecommandVelocity(0.0, 0.0);
-	    cv::imshow("view", imagem);  
-	    cv::waitKey(10);						
-	    resize(imagem,imagem,size);	  
-	    //threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	    std::string resources_folder = std::getenv("RESOURCES_FOLDER");
-		str = resources_folder + "/wisard/picture.jpg";
-		cv::imwrite(str, imagem);					
-	    msg_pic_to_rec_.data = str;
-	    msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
-		temperatura = 'Z';
-	}
-	else if ( temperatura == 'Q') {
+	if ( temperatura == 'Q') {
 
 		ROS_INFO ("direction %f", direction_vector_[CENTER]);
 		ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
@@ -215,29 +200,29 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 		  if ((direction_vector_[CENTER] < front_distance_limit_) && (direction_vector_[CENTER] != 0.0 ))
 		  {
 			  
-			temperatura = 'S';
-				
-			ROS_INFO ("Objeto proximo...");
-			if (got_picture == false )
-			{
-			  ROS_INFO ("Lendo foto...");
-			  Size size(400,225); 	
-			  updatecommandVelocity(0.0, 0.0);
-			  cv::imshow("view", imagem);  
-			  cv::waitKey(10);						
-			  //sleep(2);
-			  resize(imagem,imagem,size);	  
-			  threshold( imagem, imagem, 100,255,THRESH_BINARY);
-			  std::string resources_folder = std::getenv("RESOURCES_FOLDER");
-		      str = resources_folder + "/wisard/picture.ppm";
-			  cv::imwrite(str, imagem);					
-			  //sleep(2);
-			  msg_pic_to_rec_.data = str;
-			  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
+        temperatura = 'S';
 
-			  //got_picture = true;  
-			  turtlebot3_state_num = GET_TB3_DIRECTION;	
-			}
+        ROS_INFO ("Objeto proximo...");
+        if (got_picture == false )
+        {
+          ROS_INFO ("Lendo foto...");
+          Size size(400,225); 	
+          updatecommandVelocity(0.0, 0.0);
+          cv::imshow("view", imagem);  
+          cv::waitKey(10);						
+          //sleep(2);
+          resize(imagem,imagem,size);	  
+          threshold( imagem, imagem, 100,255,THRESH_BINARY);
+          std::string resources_folder = std::getenv("RESOURCES_FOLDER");
+            str = resources_folder + "/wisard/picture.ppm";
+          cv::imwrite(str, imagem);					
+          //sleep(2);
+          msg_pic_to_rec_.data = str;
+          msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
+
+          //got_picture = true;  
+          turtlebot3_state_num = GET_TB3_DIRECTION;	
+        }
 			
 		  }
 		  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
@@ -303,6 +288,10 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 	 } else if (temperatura == 'S'){	  
 		     //  ROS_INFO ("Para");
 		       updatecommandVelocity(0,0);
+	 
+   } else if (temperatura == 'C'){	  
+		     //  ROS_INFO ("Anda para tras");
+		       updatecommandVelocity(-1 * LINEAR_VELOCITY, 0);
 	 }
  
 
