@@ -9,6 +9,7 @@
 # http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_gui/py_image_display/py_image_display.html
 # rospy for the subscriber
 
+import os
 import rospy
 from std_msgs.msg import String
 # ROS Image message
@@ -41,7 +42,7 @@ class wiz:
 
         # general widget creation & variables
         self.n_classes = 3
-        self.raiz = '/home/davidpcsg/Imagens'
+        self.raiz = os.environ['RESOURCES_FOLDER'] + '/wisard'
         self.n_samples = 10
         self.types = [("PPM", ".ppm")]
         self.wsd = self.x = self.y = None

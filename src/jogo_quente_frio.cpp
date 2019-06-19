@@ -199,8 +199,9 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 	    cv::waitKey(10);						
 	    resize(imagem,imagem,size);	  
 	    //threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	    cv::imwrite("/home/davidpcsg/Imagens/picture.jpg", imagem);					
-	    str = "/home/davidpcsg/Imagens/picture.jpg";
+	    std::string resources_folder = std::getenv("RESOURCES_FOLDER");
+		str = resources_folder + "/wisard/picture.jpg";
+		cv::imwrite(str, imagem);					
 	    msg_pic_to_rec_.data = str;
 	    msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
 		temperatura = 'Z';
@@ -227,9 +228,10 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 			  //sleep(2);
 			  resize(imagem,imagem,size);	  
 			  threshold( imagem, imagem, 100,255,THRESH_BINARY);
-			  cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
+			  std::string resources_folder = std::getenv("RESOURCES_FOLDER");
+		      str = resources_folder + "/wisard/picture.ppm";
+			  cv::imwrite(str, imagem);					
 			  //sleep(2);
-			  str = "/home/davidpcsg/Imagens/picture.ppm";
 			  msg_pic_to_rec_.data = str;
 			  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
 
