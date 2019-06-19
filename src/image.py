@@ -26,6 +26,7 @@ from string import *
 from pyppm import *
 import sys
 import os.path
+import vlc
 #------
 
 import time
@@ -111,7 +112,7 @@ class wiz:
         
         print("wisard answer:")
         print(out[0])
-        
+        self.play_audio(out[0])
         storeClassNumber = 1
         storePercent= 0
         cv2.namedWindow('image',cv2.WINDOW_NORMAL)
@@ -120,6 +121,19 @@ class wiz:
         print(class_name)     
         cv2.imshow('image', self.switch_class_image(class_name))
         cv2.waitKey(3)
+    
+    def play_audio(self, train_class_label):
+        audio_to_play = ""
+        if train_class_label == "quadrado":
+            audio_to_play = os.environ['RESOURCES_FOLDER'] + '/audio/robot_quadrado.mp3'
+        elif train_class_label == "triangulo":
+            audio_to_play = os.environ['RESOURCES_FOLDER'] + '/audio/robot_triangulo.mp3'
+        elif train_class_label == "circulo":
+            audio_to_play = os.environ['RESOURCES_FOLDER'] + '/audio/robot_circulo.mp3'
+        else:
+            audio_to_play = os.environ['RESOURCES_FOLDER'] + '/audio/robot_indefinido.mp3'
+        p = vlc.MediaPlayer("file://" + audio_to_play)
+        p.play()
     
     def process_image(self, image):
 
