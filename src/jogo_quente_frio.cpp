@@ -54,16 +54,24 @@ bool JogoQuenteFrioDefinitions::init()
   {
     turning_radius_ = 0.08;
     rotate_angle_ = 50.0 * DEG2RAD;
-    front_distance_limit_ = 0.5;
-    side_distance_limit_  = 0.5;
+    front_distance_limit_ = 0.25;
+    side_distance_limit_  = 0.25;
   }
   else if (!robot_model.compare("waffle"))
   {
 	printf("  waffle  ");
     turning_radius_ = 0.1435;
     rotate_angle_ = 40.0 * DEG2RAD;
-    front_distance_limit_ = 0.5;
-    side_distance_limit_  = 0.5;
+    front_distance_limit_ = 0.25;
+    side_distance_limit_  = 0.25;
+  } 
+  else
+  {
+	  robot_model = "undefined";
+	  turning_radius_ = 0.1435;
+      rotate_angle_ = 40.0 * DEG2RAD;
+      front_distance_limit_ = 0.35;
+      side_distance_limit_  = 0.15;
   }
   ROS_INFO("robot_model : %s", robot_model.c_str());
   ROS_INFO("turning_radius_ : %lf", turning_radius_);
@@ -199,91 +207,96 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 	}
 	else if ( temperatura == 'Q') {
 
-		//ROS_INFO ("direction %f", direction_vector_[CENTER]);
-		//ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
+		ROS_INFO ("direction %f", direction_vector_[CENTER]);
+		ROS_INFO ("front_distance_limit_ %f", front_distance_limit_);
                 
 		//Tira foto quando se aproxima de um objeto 
-		      if ((direction_vector_[CENTER] < 0.5) && (direction_vector_[CENTER] != 0.0 ))
+		  if ((direction_vector_[CENTER] < front_distance_limit_) && (direction_vector_[CENTER] != 0.0 ))
+		  {
+			  
+			temperatura = 'S';
+				
+			ROS_INFO ("Objeto proximo...");
+			if (got_picture == false )
+			{
+			  ROS_INFO ("Lendo foto...");
+			  Size size(400,225); 	
+			  updatecommandVelocity(0.0, 0.0);
+			  cv::imshow("view", imagem);  
+			  cv::waitKey(10);						
+			  //sleep(2);
+			  resize(imagem,imagem,size);	  
+			  threshold( imagem, imagem, 100,255,THRESH_BINARY);
+			  cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
+			  //sleep(2);
+			  str = "/home/davidpcsg/Imagens/picture.ppm";
+			  msg_pic_to_rec_.data = str;
+			  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
+
+			  //got_picture = true;  
+			  turtlebot3_state_num = GET_TB3_DIRECTION;	
+			}
+			
+		  }
+		  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
+
+		  /*
+		  switch(turtlebot3_state_num)
+		  {
+			case GET_TB3_DIRECTION: 	  
+			  if ((direction_vector_[CENTER] > front_distance_limit_) || (direction_vector_[CENTER] == 0.0 ))
 			  {
-				//ROS_INFO ("Objeto proximo...");
-				if (got_picture == false )
-				{
-				  ROS_INFO ("Lendo foto...");
-				  Size size(400,225); 	
-                  updatecommandVelocity(0.0, 0.0);
-				  cv::imshow("view", imagem);  
-                  cv::waitKey(10);						
-				  //sleep(2);
-	              resize(imagem,imagem,size);	  
-	              threshold( imagem, imagem, 100,255,THRESH_BINARY);
-	              //cvtColor(imagem, imagem, CV_GRAY2RGB); 
-                  cv::imwrite("/home/davidpcsg/Imagens/picture.ppm", imagem);					
-				  //sleep(2);
-			      str = "/home/davidpcsg/Imagens/picture.ppm";
-				  msg_pic_to_rec_.data = str;
-				  msg_pic_to_rec_pub_.publish(msg_pic_to_rec_);	
-				  	
-				  //got_picture = true;  
-				  turtlebot3_state_num = GET_TB3_DIRECTION;	
-				}	
-			  }	  
-		 	  
-			  /*
-				  switch(turtlebot3_state_num)
-				  {
-					case GET_TB3_DIRECTION: 	  
-					  if ((direction_vector_[CENTER] > front_distance_limit_) || (direction_vector_[CENTER] == 0.0 ))
-					  {
-						turtlebot3_state_num = TB3_DRIVE_FORWARD;
-						got_picture = false;   
-					  } 
-					  if (((direction_vector_[CENTER] < front_distance_limit_ ) && (direction_vector_[CENTER] != 0.0 )) || 
-						 ( (direction_vector_[LEFT] < side_distance_limit_) && (direction_vector_[LEFT] != 0.0 )))
-					  {  
-						turtlebot3_state_num = TB3_RIGHT_TURN;   
-					  }
-					  else if ((direction_vector_[RIGHT] < side_distance_limit_) && (direction_vector_[RIGHT] != 0.0 ))
-					  {	  
-						turtlebot3_state_num = TB3_LEFT_TURN;
-					  }
-					  break;
+				turtlebot3_state_num = TB3_DRIVE_FORWARD;
+				got_picture = false;   
+			  } 
+			  if (((direction_vector_[CENTER] < front_distance_limit_ ) && (direction_vector_[CENTER] != 0.0 )) || 
+				 ( (direction_vector_[LEFT] < side_distance_limit_) && (direction_vector_[LEFT] != 0.0 )))
+			  {  
+				turtlebot3_state_num = TB3_RIGHT_TURN;   
+			  }
+			  else if ((direction_vector_[RIGHT] < side_distance_limit_) && (direction_vector_[RIGHT] != 0.0 ))
+			  {	  
+				turtlebot3_state_num = TB3_LEFT_TURN;
+			  }
+			  break;
 
-					case TB3_DRIVE_FORWARD:
-					  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
-					  turtlebot3_state_num = GET_TB3_DIRECTION;
-					  break;
+			case TB3_DRIVE_FORWARD:
+			  updatecommandVelocity(LINEAR_VELOCITY, 0.0);
+			  turtlebot3_state_num = GET_TB3_DIRECTION;
+			  break;
 
-					case TB3_RIGHT_TURN:  
-					  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
-					  turtlebot3_state_num = GET_TB3_DIRECTION;
-					  break;
+			case TB3_RIGHT_TURN:  
+			  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
+			  turtlebot3_state_num = GET_TB3_DIRECTION;
+			  break;
 
-					case TB3_LEFT_TURN:	  
-					  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
-					  turtlebot3_state_num = GET_TB3_DIRECTION;
-					  break;
+			case TB3_LEFT_TURN:	  
+			  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
+			  turtlebot3_state_num = GET_TB3_DIRECTION;
+			  break;
 
-					default:
-					  turtlebot3_state_num = GET_TB3_DIRECTION;
-					  break;
-				  }
-			  */
-	  
-		     // ROS_INFO ("Temperatura Quente");
+			default:
+			  turtlebot3_state_num = GET_TB3_DIRECTION;
+			  break;
+		  }
+		  */
+
+
+		 // ROS_INFO ("Temperatura Quente");
 		
 	 } else if (temperatura == 'F') {
 		     
-	         // ROS_INFO ("Temperatura Fria");	              
-		      
-			  /*
-		      if (direcao_giro == 'D') { 
-					  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
-				      turtlebot3_state_num = GET_TB3_DIRECTION;
-			  } else if (direcao_giro == 'E'){
-					  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
-		              turtlebot3_state_num = GET_TB3_DIRECTION;
-			  }
-			  */
+		 // ROS_INFO ("Temperatura Fria");	              
+
+
+		  if (direcao_giro == 'D') { 
+				  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
+				  turtlebot3_state_num = GET_TB3_DIRECTION;
+		  } else if (direcao_giro == 'E'){
+				  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
+				  turtlebot3_state_num = GET_TB3_DIRECTION;
+		  }
+			  
 		
 	 } else if (temperatura == 'S'){	  
 		     //  ROS_INFO ("Para");
