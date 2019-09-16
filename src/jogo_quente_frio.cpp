@@ -276,6 +276,8 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 		 // ROS_INFO ("Temperatura Fria");	              
 
 
+		  /* NO EMOTIV FICAR ALTERANDO A DIRECAO DO GIRO PODE CAUSAR PROBLEMA POIS A INTERFACE ENVIA UMA STREAM DE F's ENQUANTO O USUARIO ESTIVER NO ESTADO PULL 
+		     ALTERADO PARA SEMPRE GIRAR PARA O MESMO LADO
 		  if (direcao_giro == 'D') { 
 				  updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
 				  turtlebot3_state_num = GET_TB3_DIRECTION;
@@ -283,7 +285,10 @@ bool JogoQuenteFrioDefinitions::controlLoop()
 				  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
 				  turtlebot3_state_num = GET_TB3_DIRECTION;
 		  }
-			  
+		  */
+		  updatecommandVelocity(0.0, ANGULAR_VELOCITY);
+		  turtlebot3_state_num = GET_TB3_DIRECTION;
+		 
 		
 	 } else if (temperatura == 'S'){	  
 		     //  ROS_INFO ("Para");
